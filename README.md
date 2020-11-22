@@ -14,7 +14,8 @@ config zone
         option output 'ACCEPT'
         option masq '1'
         option mtu_fix '1'
-        option network 'wan wan6'
+        list network 'wan' 
+        list network 'wan6'
 
         ##
         ## Above is just an example, below are the nat6 related options:
