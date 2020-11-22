@@ -1,7 +1,7 @@
 Masquerading NAT6
 =================
 
-Easy to use `firewall.d` hook to allow you to specify `masq6` right as you'd expect.
+Easy to use `firewall.nat6` script to allow you to specify `masq6` right as you'd expect.
 
 Configuration is done per firewall zone, just like standard masquerading:
 
@@ -14,8 +14,7 @@ config zone
         option output 'ACCEPT'
         option masq '1'
         option mtu_fix '1'
-        list network wan
-        list network wan6
+        option network 'wan wan6'
 
         ##
         ## Above is just an example, below are the nat6 related options:
@@ -28,11 +27,27 @@ config zone
 Installation
 ------------
 
-Simply put the included `90-nat6.fw` to `/etc/firewall.d/with_reload/`:
+Simply add the included `firewall.nat6` to `/etc/firewall.nat6`:
 
 ```sh
-curl -sSLfo '/etc/firewall.d/with_reload/90-nat6.fw' 'https://raw.githubusercontent.com/akatrevorjay/openwrt-masq6/master/90-nat6.fw'
-chmod +x '/etc/firewall.d/with_reload/90-nat6.fw'
+curl -sSLfo '/etc/firewall.nat6' 'https://raw.githubusercontent.com/jamesmacwhite/openwrt-masq6/master/firewall.nat6'
+chmod +x '/etc/firewall.nat6'
+```
+
+Then add to your firewall config:
+
+```sh
+uci -q delete firewall.nat6
+uci set firewall.nat6="include"
+uci set firewall.nat6.path="/etc/firewall.nat6"
+uci set firewall.nat6.reload="1"
+uci commit firewall
 ```
 
 Then configure as above and `/etc/init.d/firewall restart`.
+
+You should also add this file to `/etc/sysupgrade.conf` to preserve this file on sysupgrade.
+
+```
+echo "/etc/firewall.nat6" >> /etc/sysupgrade.conf
+```
