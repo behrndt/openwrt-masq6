@@ -2,7 +2,7 @@
 #
 # Masquerading nat6 firewall.d script.
 #
-# Place as: /etc/firewall.d/with_reload/90-nat6.fw and make it executable.
+# Place as: /etc/firewall.nat6 and make it executable.
 #
 # Then you can configure in /etc/config/firewall per zone, ala where you have:
 #   option masq 1
