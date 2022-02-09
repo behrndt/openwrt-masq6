@@ -1,4 +1,3 @@
-#!/bin/sh
 # NAT6 + masquerading firewall script
 # https://github.com/akatrevorjay/openwrt-masq6
 # trevorj <github@trevor.joynson.io>
@@ -34,19 +33,21 @@ validate_ula_prefix() {
 }
  
 ip6t() {
-    ip6tables "${@}"
+    ip6tables -w 60 "${@}"
 }
  
 ip6t_add() {
     if ! ip6t -C "${@}" &> /dev/null; then
-        ip6t -I "${@}"
+	ip6t -A "${@}"
     fi
 }
  
 nat6_init() {
-    iptables-save -t nat \
-    | sed -e "/\s[DS]NAT\s/d;/\sMASQUERADE$/d;/\s--match-set\s\S*/s//\06/" \
-    | ip6tables-restore -T nat
+
+    iptables-save -t nat | grep "*nat\|:INPUT\|:OUTPUT\|:P.*ROUTING\|:zone_.*routing\|:p.*routing.*_rule\|A .*!fw3\|A POSTROUTING.*!fw3\|COMMIT" | grep -v "j MASQUERADE" | ip6tables-restore -w 60 -n -T nat
+
+    # ensure there are no duplicates in IPv6 NAT created during reload
+    ip6tables-save -t nat | uniq | ip6tables-restore -T nat -w 60
 }
  
 masq6_network() {

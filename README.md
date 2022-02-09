@@ -35,7 +35,7 @@ curl -sSLfo '/etc/firewall.nat6' 'https://raw.githubusercontent.com/jamesmacwhit
 chmod +x '/etc/firewall.nat6'
 ```
 
-Then add to your firewall config:
+Then add to your firewall config before firewall.user and other custom include scripts:
 
 ```sh
 uci -q delete firewall.nat6
